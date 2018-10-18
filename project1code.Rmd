@@ -1,0 +1,73 @@
+---
+title: "Project 1 R Markdown"
+author: "Ye-in Jeon, Sam Kupfer, Amy Mykityshyn, Krystin Sinclair, Vishnupriya Venkateswaran"
+date: "February 27, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Load data and drop columns with missing data
+```{r loaddata}
+oecd <- data.frame(read.csv('~/Downloads/OECD_151617.csv'))
+oecd <- oecd[sapply(oecd, function(x) !any(is.na(x)))]
+head(oecd)
+```
+
+
+### Structure of Dataframe
+```{r struct}
+str(oecd)
+```
+
+
+### Descriptive Statistics
+summary function is used to get mean, min, max, and quartiles for each column
+```{r summ}
+summary(oecd)
+```
+And this code to get the standard deviations
+```{r sds}
+apply(oecd, 2, sd)
+```
+
+
+### Life Satisfaction Geomap
+You need the rworldmap package for this part
+```{r geomap}
+# install.packages("rworldmap")
+library(rworldmap)
+oecd17 <- subset(oecd, subset = Year == 2017)
+oecd17_joined <- joinCountryData2Map(oecd17, joinCode ="NAME", nameJoinColumn = "Country")
+mapCountryData(oecd17_joined, nameColumnToPlot="Life.satisfaction", colourPalette = c("red", "yellow", "green"), missingCountryCol = "gray89", addLegend = TRUE, mapTitle = "Life Satisfaction in OECD Countries" )
+```
+
+
+### Data Visualization
+```{r data viz 2}
+for (col in 2:ncol(oecd)) {
+  if (names(oecd)[col] != "Year") {
+    nicename <- gsub("\\.", " ", names(oecd)[col])
+    hist(oecd[,col], xlab=nicename, main=nicename, col="lightgreen")
+    boxplot(oecd[,col], main=nicename, col="darkgoldenrod1")
+  }
+}
+
+```
+
+
+### Correlations with Life Satisfaction and Correlation Plot
+The corrplot package is needed for this
+```{r corrplots, fig.height = 15, fig.width = 20}
+# install.packages("corrplot")
+library(corrplot)
+oecdused <- names(oecd)[names(oecd) != "Year" & names(oecd) != "Country"]
+columnsubset <- oecd[oecdused]
+oecd_cor <- cor(columnsubset, method = "pearson")
+lifesat_cors <- oecd_cor[1,]
+lifesat_cors
+corrplot(oecd_cor, method = "number", type = "lower")
+```
