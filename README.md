@@ -9,6 +9,9 @@ Vishnupriya Venkateswaran
 
 # Quality of Life
 Exploratory Data Analysis
+[Link to Data from OECD](https://stats.oecd.org/Index.aspx?DataSetCode=BLI)
+*For this project years 2016 and 2017 were used
+Organization for Economic Co-operation Development
 
 # Background
 
